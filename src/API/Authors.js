@@ -48,7 +48,7 @@ export async function updateAuthor(id, author) {
 
 export async function deleteAuthor(id) {
     try {
-        await axios.delete(`${backendUrl}/api/authorss/${id}`);
+        await axios.delete(`${backendUrl}/api/authors/${id}`);
     }
     catch (e) {
         return e;
