@@ -79,27 +79,17 @@ class AddEditCategoryForm extends Component {
         </Modal.Header>
         <Modal.Body>
           <Form className="category-form" onSubmit={this.onSubmit} noValidate validated={this.state.validated}>
+
             <Form.Group as={Row} controlId="formCategory">
               <Form.Label column sm={4}>Category Name:</Form.Label>
               <Col sm={8}>
-                <Form.Control
-                  required
-                  type="text"
-                  placeholder="Enter category name"
-                  onChange={this.handleChange}
-                  name="name"
-                  value={this.state.newCategory ? "" : this.state.category.name}
-                />
-                <Form.Control.Feedback type="invalid">
-                  "invalid category name"
-                </Form.Control.Feedback>
+                <Form.Control required type="text" placeholder="Enter category name" onChange={this.handleChange} name="name" value={this.state.newCategory ? "" : this.state.category.name} />
+                <Form.Control.Feedback type="invalid">"invalid category name"</Form.Control.Feedback>
               </Col>
             </Form.Group>
-            <Col sm={{ span: 4, offset: 4 }}>
-              <Button variant="primary" type="submit">
-                Add
-              </Button>
-            </Col>
+
+            <Col sm={{ span: 4, offset: 4 }}><Button variant="primary" type="submit">Add</Button></Col>
+          
           </Form>
         </Modal.Body>
       </Modal>

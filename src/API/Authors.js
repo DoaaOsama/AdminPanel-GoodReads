@@ -2,9 +2,9 @@ import axios from 'axios';
 
 const backendUrl = 'http://localhost:3000';
 
-export async function addAutho(book) {
+export async function addAuthor(author) {
     try {
-        await (axios.post(`${backendUrl}/api/books/`, book)
+        await (axios.post(`${backendUrl}/api/authors/`, author)
             .then()
             .catch(function (error) {
                 console.log(error);
@@ -17,8 +17,8 @@ export async function addAutho(book) {
 
 export async function getAuthors() {
     try {
-        const books = await (axios.get(`${backendUrl}/api/authors`));
-        const data = books.data;
+        const authors = await (axios.get(`${backendUrl}/api/authors`));
+        const data = authors.data;
         return data;
     }
     catch (e) {
@@ -26,10 +26,10 @@ export async function getAuthors() {
     }
 }
 
-export async function getBookbyId(id) {
+export async function getAuthorbyId(id) {
     try {
-        const book = await (axios.get(`${backendUrl}/api/books/${id}`));
-        const data = book.data;
+        const author = await (axios.get(`${backendUrl}/api/authors/${id}`));
+        const data = author.data;
         return data;
     }
     catch (e) {
@@ -37,18 +37,18 @@ export async function getBookbyId(id) {
     }
 }
 
-export async function updateBook(id, book) {
+export async function updateAuthor(id, author) {
     try {
-        await axios.patch(`${backendUrl}/api/books/${id}`, book);
+        await axios.patch(`${backendUrl}/api/authors/${id}`, author);
     }
     catch (e) {
         return e;
     }
 }
 
-export async function deleteBook(id) {
+export async function deleteAuthor(id) {
     try {
-        await axios.delete(`${backendUrl}/api/books/${id}`);
+        await axios.delete(`${backendUrl}/api/authorss/${id}`);
     }
     catch (e) {
         return e;

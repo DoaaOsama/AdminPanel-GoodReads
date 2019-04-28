@@ -20,7 +20,6 @@ class CategoryAdmin extends Component {
     };
   }
 
-
   async componentDidMount() {
     const categories = await getCategories();
     this.setState({

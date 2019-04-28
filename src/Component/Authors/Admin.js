@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Table } from "react-bootstrap";
-import { authors } from "../../data";
+import { getAuthors, deleteAuthor } from "../../API/Authors";
+
 import AddEditAuthorForm from "./AddEditForm";
 
 class AuthorAdmin extends Component {
@@ -11,17 +12,24 @@ class AuthorAdmin extends Component {
     this.deleteAuthor = this.deleteAuthor.bind(this);
 
     this.state = {
-      authors: authors,
+      authors: [],
       newAuthor: false,
       author: {},
       show: false
     };
   }
 
-  handleClose = newAuthors => {
+  async componentDidMount() {
+    const authors = await getAuthors();
+    this.setState({
+      authors: authors
+    });
+  }
+
+  handleClose = async () => {
     this.setState({
       show: false,
-      authors: newAuthors
+      authors: await getAuthors()
     });
   };
 
@@ -31,16 +39,12 @@ class AuthorAdmin extends Component {
         newAuthor: formType,
         author: author,
         show: true
-      },
-      () => console.log(this.state)
-    );
+      });
   }
 
-  deleteAuthor(authorId) {
-    const newauthors = this.state.authors;
-    const index = newauthors.findIndex(auth => auth.id === authorId);
-    newauthors.splice(index, 1);
-    this.setState({ authors: newauthors });
+  async deleteAuthor(authorId) {
+    await deleteAuthor(authorId);
+    this.setState({ authors: await getAuthors() });
   }
 
   render() {
@@ -49,59 +53,31 @@ class AuthorAdmin extends Component {
         <Table hover>
           <thead>
             <tr>
-              <th
-                style={{
-                  position: "absolute",
-                  right: "0rem",
-                  fontSize: "20px"
-                }}
-              >
-                <i
-                  className="fas fa-plus-circle"
-                  onClick={() =>
-                    this.authorform(true, {
-                      id: Number,
-                      name: "",
-                      cover: "",
-                      Born: "",
-                      bio: "",
-                      Website: ""
-                    })
-                  }
-                />
+              <th style={{ position: "absolute", right: "0rem", fontSize: "20px" }}>
+                <i className="fas fa-plus-circle" onClick={() => this.authorform(true, { _id: null, name: "", cover: "", BD: new Date().toISOString().substring(0, 10), bio: "", website: "" })} />
               </th>
             </tr>
             <tr>
-              <th>ID</th>
               <th>Photo</th>
               <th>Name</th>
-              <th>Born</th>
+              <th>Birth Date</th>
+              <th>Biography</th>
+              <th>Website</th>
             </tr>
           </thead>
           <tbody>
             {this.state.authors.map(author => {
               return (
-                <tr key={author.id}>
-                  <td>{author.id}</td>
-                  <td>
-                    <img
-                      src={author.cover}
-                      style={{ width: "100px", height: "150px" }}
-                      alt={author.name}
-                    />
-                  </td>
+                <tr key={author._id}>
+                  <td><img src={author.cover} style={{ width: "100px", height: "150px" }} alt={author.name} /></td>
                   <td>{author.name}</td>
-                  <td>{author.Born}</td>
+                  <td>{new Date(author.BD).toDateString()}</td>
+                  <td>{author.bio}</td>
+                  <td>{author.website}</td>
                   <td>
                     <div className="tdFlex">
-                      <i
-                        className="fas fa-pen"
-                        onClick={() => this.authorform(false, author)}
-                      />
-                      <i
-                        className="fas fa-eraser"
-                        onClick={() => this.deleteAuthor(author.id)}
-                      />
+                      <i className="fas fa-pen" onClick={() => this.authorform(false, author)} />
+                      <i className="fas fa-eraser" onClick={() => this.deleteAuthor(author._id)} />
                     </div>
                   </td>
                 </tr>
@@ -110,14 +86,7 @@ class AuthorAdmin extends Component {
           </tbody>
         </Table>
         {this.state.show && (
-          <AddEditAuthorForm
-            // ref={this.BookModalRef}
-            newAuthor={this.state.newAuthor}
-            author={this.state.author}
-            show={this.state.show}
-            authors={this.state.authors}
-            handleClose={this.handleClose}
-          />
+          <AddEditAuthorForm newAuthor={this.state.newAuthor} author={this.state.author} show={this.state.show} authors={this.state.authors} handleClose={this.handleClose} />
         )}
       </>
     );
