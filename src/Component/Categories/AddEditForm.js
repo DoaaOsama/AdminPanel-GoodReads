@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Button, Modal, Form, Row, Col } from "react-bootstrap";
-import { addCategory, updateCategory } from '../../API/category';
+import { addCategory, updateCategory } from '../../API/Category';
 
 class AddEditCategoryForm extends Component {
   constructor(props, context) {
@@ -62,7 +62,6 @@ class AddEditCategoryForm extends Component {
         await addCategory(this.state.category);
       }
     } else {
-      console.log(this.state.category._id);
       await updateCategory(this.state.category._id, this.state.category);
     }
     if (form.checkValidity() === false || invalid) {
@@ -79,16 +78,9 @@ class AddEditCategoryForm extends Component {
           <Modal.Title>Category</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form
-            className="category-form"
-            onSubmit={this.onSubmit}
-            noValidate
-            validated={this.state.validated}
-          >
+          <Form className="category-form" onSubmit={this.onSubmit} noValidate validated={this.state.validated}>
             <Form.Group as={Row} controlId="formCategory">
-              <Form.Label column sm={4}>
-                Category Name:
-              </Form.Label>
+              <Form.Label column sm={4}>Category Name:</Form.Label>
               <Col sm={8}>
                 <Form.Control
                   required

@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Table } from "react-bootstrap";
 // import { categories } from "../../data";
-import { getCategories, deleteCategory } from "../../API/category"
+import { getCategories, deleteCategory } from "../../API/Category"
 
 import AddEditCategoryForm from "./AddEditForm";
 
@@ -63,7 +63,6 @@ class CategoryAdmin extends Component {
               </th>
             </tr>
             <tr>
-              <th>ID</th>
               <th>Name</th>
             </tr>
           </thead>
@@ -73,7 +72,6 @@ class CategoryAdmin extends Component {
               if (!category.isDeleted) {
                 row =
                   <tr key={category._id}>
-                    <td>{category._id}</td>
                     <td>{category.name}</td>
                     <td><div className="tdFlex">
                       <i className="fas fa-pen" onClick={() => this.categoryform(false, category)} />

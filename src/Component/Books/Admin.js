@@ -1,6 +1,9 @@
 import React, { Component } from "react";
 import { Table } from "react-bootstrap";
-import { books, categories, authors } from "../../data";
+import { getBooks, deleteBook } from '../../API/Books';
+import { getCategories } from "../../API/Category";
+import { getAuthors } from "../../API/Authors";
+
 import AddEditBookForm from "./AddEditForm";
 
 class BookAdmin extends Component {
@@ -11,19 +14,31 @@ class BookAdmin extends Component {
     this.deleteBook = this.deleteBook.bind(this);
 
     this.state = {
-      categories: categories,
-      authors: authors,
+      categories: [],
+      authors: [],
       newBook: false,
       book: {},
       show: false,
-      books: books
+      books: []
     };
   }
 
-  handleClose = newBooks => {
+  async componentDidMount() {
+    const categories = await getCategories();
+    const books = await getBooks();
+    const authors = await getAuthors();
+    this.setState({
+      categories: categories,
+      authors: authors,
+      books: books
+    }, () => console.log(this.state.books));
+
+  }
+
+  handleClose = async () => {
     this.setState({
       show: false,
-      books: newBooks
+      books: await getBooks()
     });
   };
 
@@ -33,16 +48,12 @@ class BookAdmin extends Component {
         newBook: formType,
         book: book,
         show: true
-      },
-      () => console.log(this.state)
-    );
+      });
   }
 
-  deleteBook(bookId) {
-    const newbooks = this.state.books;
-    const index = newbooks.findIndex(bk => bk.id === bookId);
-    newbooks.splice(index, 1);
-    this.setState({ books: newbooks });
+  async deleteBook(bookId) {
+    await deleteBook(bookId);
+    this.setState({ books: await getBooks() });
   }
 
   render() {
@@ -52,30 +63,14 @@ class BookAdmin extends Component {
           <thead>
             <tr>
               <th
-                style={{
-                  position: "absolute",
-                  right: "0rem",
-                  fontSize: "20px"
-                }}
-              >
-                <i
-                  className="fas fa-plus-circle"
-                  onClick={() =>
-                    this.bookform(true, {
-                      id: Number,
-                      title: "",
-                      category: "",
-                      author: "",
-                      cover: ""
-                    })
-                  }
-                />
+                style={{ position: "absolute", right: "0rem", fontSize: "20px" }}>
+                <i className="fas fa-plus-circle" onClick={() => this.bookform(true, { _id: null, title: "", description: "", cover: "", categoryID: { _id: "" }, authorID: { _id: "" } })} />
               </th>
             </tr>
             <tr>
-              <th>ID</th>
               <th>Photo</th>
               <th>Name</th>
+              <th>Description</th>
               <th>Category</th>
               <th>Author Name</th>
               <th />
@@ -84,28 +79,16 @@ class BookAdmin extends Component {
           <tbody>
             {this.state.books.map(book => {
               return (
-                <tr key={book.id}>
-                  <td>{book.id}</td>
-                  <td>
-                    <img
-                      src={book.cover}
-                      style={{ width: "100px", height: "150px" }}
-                      alt={book.name}
-                    />
-                  </td>
+                <tr key={book._id}>
+                  <td><img src={book.cover} style={{ width: "100px", height: "150px" }} alt={book.name} /></td>
                   <td>{book.title}</td>
-                  <td>{book.category}</td>
-                  <td>{book.author}</td>
+                  <td>{book.description}</td>
+                  <td>{book.categoryID.name}</td>
+                  <td>{book.authorID.name}</td>
                   <td>
                     <div className="tdFlex">
-                      <i
-                        className="fas fa-pen"
-                        onClick={() => this.bookform(false, book)}
-                      />
-                      <i
-                        className="fas fa-eraser"
-                        onClick={() => this.deleteBook(book.id)}
-                      />
+                      <i className="fas fa-pen" onClick={() => this.bookform(false, book)} />
+                      <i className="fas fa-eraser" onClick={() => this.deleteBook(book._id)} />
                     </div>
                   </td>
                 </tr>
@@ -114,15 +97,7 @@ class BookAdmin extends Component {
           </tbody>
         </Table>
         {this.state.show && (
-          <AddEditBookForm
-            newBook={this.state.newBook}
-            book={this.state.book}
-            show={this.state.show}
-            categories={this.state.categories}
-            authors={this.state.authors}
-            handleClose={this.handleClose}
-            books={this.state.books}
-          />
+          <AddEditBookForm newBook={this.state.newBook} book={this.state.book} show={this.state.show} categories={this.state.categories} authors={this.state.authors} handleClose={this.handleClose} books={this.state.books} />
         )}
       </>
     );

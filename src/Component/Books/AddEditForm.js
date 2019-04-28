@@ -1,6 +1,6 @@
 import React, { Component } from "react";
-
 import { Button, Modal, Form, Row, Col } from "react-bootstrap";
+import { addBook, updateBook } from '../../API/Books';
 
 class AddEditBookForm extends Component {
   constructor(props, context) {
@@ -25,11 +25,12 @@ class AddEditBookForm extends Component {
     this.setState(
       {
         currentBook: {
-          id: Number,
+          _id: null,
           title: "",
-          category: "",
-          author: "",
-          cover: ""
+          description: "",
+          cover: "",
+          categoryID: "",
+          authorID: ""
         },
         show: false,
         validated: false
@@ -51,54 +52,23 @@ class AddEditBookForm extends Component {
     });
   }
 
-  saveBook(event) {
+  async saveBook(event) {
     event.preventDefault();
     const form = event.currentTarget;
-    const { id } = this.state.currentBook;
+    const { _id } = this.state.currentBook;
     let invalid = false;
-    if (isNaN(id)) {
+    if (_id === null) {
       this.state.books.map(bk => {
         if (this.state.currentBook.title === bk.title) {
           invalid = true;
           return bk;
         } else return "";
       });
-
-      if (
-        !invalid &&
-        !(
-          this.state.currentBook.title === "" ||
-          this.state.currentBook.image === ""
-        )
-      ) {
-        this.setState({
-          books: [
-            ...this.state.books,
-            {
-              ...this.state.currentBook,
-              id: this.state.books.length + 1,
-              category:
-                this.state.currentBook.category === ""
-                  ? this.state.categories[0].name
-                  : this.state.currentBook.category,
-              author:
-                this.state.currentBook.author === ""
-                  ? this.state.authors[0].name
-                  : this.state.currentBook.author
-            }
-          ]
-        });
+      if (!invalid && !(this.state.currentBook.title === "" || this.state.currentBook.image === "")) {
+        await addBook(this.state.currentBook)
       }
     } else {
-      this.state.books.find(book => {
-        if (this.state.currentBook.id === book.id) {
-          book.title = this.state.currentBook.title;
-          book.category = this.state.currentBook.category;
-          book.author = this.state.currentBook.author;
-          book.cover = this.state.currentBook.cover;
-          return true;
-        } else return false;
-      });
+      await updateBook(this.state.currentBook._id, this.state.currentBook)
     }
     if (form.checkValidity() === false || invalid) {
       event.stopPropagation();
@@ -114,97 +84,50 @@ class AddEditBookForm extends Component {
           <Modal.Title>Add a Book</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form
-            className="book-form"
-            onSubmit={this.saveBook}
-            noValidate
-            validated={this.state.validated}
-          >
-            {/* AddBook */}
+          <Form className="book-form" onSubmit={this.saveBook} noValidate validated={this.state.validated}>
             <Form.Group as={Row} controlId="addBook">
-              <Form.Label column sm="3">
-                Book Title
-              </Form.Label>
+              <Form.Label column sm="3">Book Title</Form.Label>
               <Col sm="9">
-                <Form.Control
-                  required
-                  type="text"
-                  placeholder="Add Book Title"
-                  onChange={this.handlechange}
-                  name="title"
-                  value={this.state.newBook ? "" : this.state.currentBook.title}
-                />
-                <Form.Control.Feedback type="invalid">
-                  Invalid Book Name
-                </Form.Control.Feedback>
+                <Form.Control required type="text" placeholder="Add Book Title" onChange={this.handlechange} name="title" value={this.state.newBook ? "" : this.state.currentBook.title} />
+                <Form.Control.Feedback type="invalid">Invalid Book Name</Form.Control.Feedback>
               </Col>
             </Form.Group>
-            {/* Select Category */}
+
+            <Form.Group as={Row} controlId="addBook">
+              <Form.Label column sm="3">Description</Form.Label>
+              <Col sm="9">
+                <Form.Control required as="textarea" placeholder="Add Book Description" onChange={this.handlechange} name="description" value={this.state.newBook ? "" : this.state.currentBook.description} />
+                <Form.Control.Feedback type="invalid">Invalid Book Description</Form.Control.Feedback>
+              </Col>
+            </Form.Group>
+
             <Form.Group as={Row} controlId="selectCategory">
-              <Form.Label column sm="3">
-                Category
-              </Form.Label>
+              <Form.Label column sm="3">Category</Form.Label>
               <Col sm="9">
-                <Form.Control
-                  as="select"
-                  name="category"
-                  onChange={this.handlechange}
-                  value={
-                    this.state.newBook
-                      ? this.state.categories[0].name
-                      : this.state.currentBook.category
-                  }
-                >
-                  {this.state.categories.map(category => (
-                    <option key={category.id}>{category.name}</option>
-                  ))}
+                <Form.Control as="select" name="categoryID" onChange={this.handlechange} value={this.state.newBook ? this.state.categories[0]._id : this.state.currentBook.categoryID._id}>
+                  {this.state.categories.map(category => (<option key={category._id} value={category._id}> {category.name}</option>))}
                 </Form.Control>
               </Col>
             </Form.Group>
-            {/* Select Author */}
+
             <Form.Group as={Row} controlId="selectAuthor">
-              <Form.Label column sm="3">
-                Author
-              </Form.Label>
+              <Form.Label column sm="3">Author</Form.Label>
               <Col sm="9">
-                <Form.Control
-                  as="select"
-                  name="author"
-                  onChange={this.handlechange}
-                  value={
-                    this.state.newBook ? "" : this.state.currentBook.author
-                  }
-                >
-                  {this.state.authors.map(author => (
-                    <option key={author.id}>{author.name}</option>
-                  ))}
+                <Form.Control as="select" name="authorID" onChange={this.handlechange} value={this.state.newBook ? this.state.authors[0]._id : this.state.currentBook.authorID._id}>
+                  {this.state.authors.map(author => (<option key={author._id} value={author._id}>{author.name}</option>))}
                 </Form.Control>
               </Col>
             </Form.Group>
+
             <Form.Group as={Row} controlId="BookCover">
-              <Form.Label column sm="3">
-                Book Cover:
-              </Form.Label>
+              <Form.Label column sm="3">Book Cover:</Form.Label>
               <Col sm="9">
-                {/* <InputGroup> */}
-                <Form.Control
-                  required
-                  type="text"
-                  placeholder="Add Book Cover"
-                  onChange={this.handlechange}
-                  name="cover"
-                  value={this.state.newBook ? "" : this.state.currentBook.cover}
-                />
-                <Form.Control.Feedback type="invalid">
-                  Invalid Image
-                </Form.Control.Feedback>
+                <Form.Control required type="text" placeholder="Add Book Cover" onChange={this.handlechange} name="cover" value={this.state.newBook ? "" : this.state.currentBook.cover} />
+                <Form.Control.Feedback type="invalid"> Invalid Image </Form.Control.Feedback>
               </Col>
             </Form.Group>
-            <Col sm={{ span: 4, offset: 4 }}>
-              <Button variant="primary" type="submit">
-                Add
-              </Button>
-            </Col>
+
+            <Col sm={{ span: 4, offset: 4 }}><Button variant="primary" type="submit"> Add </Button></Col>
           </Form>
         </Modal.Body>
       </Modal>
