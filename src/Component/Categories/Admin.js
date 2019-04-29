@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Table } from "react-bootstrap";
 // import { categories } from "../../data";
-import { getCategories, deleteCategory } from "../../API/Category"
+import { getCategories, deleteCategory } from "../../API/category"
 
 import AddEditCategoryForm from "./AddEditForm";
 

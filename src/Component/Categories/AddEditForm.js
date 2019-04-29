@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Button, Modal, Form, Row, Col } from "react-bootstrap";
-import { addCategory, updateCategory } from '../../API/Category';
+import { addCategory, updateCategory } from '../../API/category';
 
 class AddEditCategoryForm extends Component {
   constructor(props, context) {
@@ -89,7 +89,7 @@ class AddEditCategoryForm extends Component {
             </Form.Group>
 
             <Col sm={{ span: 4, offset: 4 }}><Button variant="primary" type="submit">Add</Button></Col>
-          
+
           </Form>
         </Modal.Body>
       </Modal>
