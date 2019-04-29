@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { deleteBook } from './Books';
 
-const backendUrl = 'http://localhost:3000';
+const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:3000';
 
 export async function addAuthor(author) {
     try {
@@ -51,7 +51,7 @@ export async function deleteAuthor(id) {
     try {
         const authors = await getAuthorbyId(id);
         const books = authors.books
-            books.map(async (book) => {
+        books.map(async (book) => {
             await deleteBook(book._id);
         })
         await axios.delete(`${backendUrl}/api/authors/${id}`);

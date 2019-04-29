@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const backendUrl = 'http://localhost:3000';
+const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:3000';
 
 export async function addBook(book) {
     try {
