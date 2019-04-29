@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Table } from "react-bootstrap";
 import { getBooks, deleteBook } from '../../API/Books';
-import { getCategories } from "../../API/Category";
+import { getCategories } from "../../API/category";
 import { getAuthors } from "../../API/Authors";
 
 import AddEditBookForm from "./AddEditForm";
