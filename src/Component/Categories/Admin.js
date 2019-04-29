@@ -67,19 +67,16 @@ class CategoryAdmin extends Component {
           </thead>
           <tbody>
             {this.state.categories.map(category => {
-              let row = null
-              if (!category.isDeleted) {
-                row =
-                  <tr key={category._id}>
-                    <td>{category.name}</td>
-                    <td><div className="tdFlex">
-                      <i className="fas fa-pen" onClick={() => this.categoryform(false, category)} />
-                      <i className="fas fa-eraser" onClick={() => this.deleteCategory(category._id)} />
-                    </div>
-                    </td>
-                  </tr>
-              }
-              return row;
+              return (
+                <tr key={category._id}>
+                  <td>{category.name}</td>
+                  <td><div className="tdFlex">
+                    <i className="fas fa-pen" onClick={() => this.categoryform(false, category)} />
+                    <i className="fas fa-eraser" onClick={() => this.deleteCategory(category._id)} />
+                  </div>
+                  </td>
+                </tr>
+              )
             })}
           </tbody>
         </Table>

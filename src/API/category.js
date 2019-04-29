@@ -1,5 +1,5 @@
 import axios from 'axios';
-
+import { deleteBook } from './Books'
 const backendUrl = 'http://localhost:3000';
 
 export async function addCategory(category) {
@@ -52,6 +52,11 @@ export async function updateCategory(id, category) {
 
 export async function deleteCategory(id) {
     try {
+        const categories = await getCategorybyId(id)
+        const books = categories.books
+            books.map(async (book) => {
+            await deleteBook(book._id);
+        })
         await axios.delete(`${backendUrl}/api/categories/${id}`);
     }
     catch (e) {

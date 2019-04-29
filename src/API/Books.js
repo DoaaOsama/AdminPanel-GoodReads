@@ -4,8 +4,9 @@ const backendUrl = 'http://localhost:3000';
 
 export async function addBook(book) {
     try {
+        delete book._id;
         await (axios.post(`${backendUrl}/api/books/`, book)
-            .then()
+            .then(console.log(book))
             .catch(function (error) {
                 console.log(error);
             }));
